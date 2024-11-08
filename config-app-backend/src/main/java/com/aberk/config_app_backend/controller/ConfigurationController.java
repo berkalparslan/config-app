@@ -1,15 +1,20 @@
 package com.aberk.config_app_backend.controller;
 
-
+import com.aberk.config_app_backend.service.YAMLService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import java.util.List;
 import java.util.Map;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/configuration")
 @CrossOrigin(origins = "*")
 public class ConfigurationController {
+
+    @Autowired
+    private YAMLService yamlService;
 
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> getConfigurationById(@PathVariable String id) {
@@ -34,6 +39,11 @@ public class ConfigurationController {
                 ))
         );
         return ResponseEntity.ok(configs);
+    }
+
+    @GetMapping("/all/json")
+    public String getConfiguration() throws IOException {
+        return yamlService.getConfigAsJson();
     }
 
     @PostMapping
