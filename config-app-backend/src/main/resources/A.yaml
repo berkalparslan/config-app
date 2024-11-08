@@ -1,0 +1,13 @@
+actions:
+  - type: remove
+    selector: ".banner-for-ads"
+  - type: replace
+    selector: "#header"
+    newElement: "<header id='new-header'>Header with A yaml</header>"
+  - type: insert
+    position: "after"
+    target: "body"
+    element: "<footer>Footer Content in A yaml</footer>"
+  - type: alter
+    oldValue: "Machine Learning"
+    newValue: "AI in A yaml"
