@@ -1,6 +1,6 @@
 async function fetchConfiguration() {
     try {
-        const response = await fetch("http://localhost:8080/api/configuration/all/json");
+        const response = await fetch("http://localhost:8080/api/configuration/configFile");
         if (!response.ok) throw new Error("cannot fetch configuration");
         
         const config = await response.json();
