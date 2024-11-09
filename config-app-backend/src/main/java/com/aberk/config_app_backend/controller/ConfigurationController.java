@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,32 +21,12 @@ public class ConfigurationController {
     @Autowired
     private ConfigService configService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> getConfigurationById(@PathVariable String id) {
-        Map<String, Object> config = Map.of(
-                "id", id,
-                "actions", List.of(
-                        Map.of("type", "remove", "selector", ".ad-banner"),
-                        Map.of("type", "replace", "selector", "#old-header", "newElement", "<header id='new-header'>New Header</header>")
-                )
-        );
-        return ResponseEntity.ok(config);
-    }
-
     @GetMapping("/all")
-    public ResponseEntity<List<Map<String, Object>>> getAllConfigurations() {
-        List<Map<String, Object>> configs = List.of(
-                Map.of("id", "1", "actions", List.of(
-                        Map.of("type", "remove", "selector", ".ad-banner")
-                )),
-                Map.of("id", "2", "actions", List.of(
-                        Map.of("type", "replace", "selector", "#old-header", "newElement", "<header id='new-header'>New Header</header>")
-                ))
-        );
-        return ResponseEntity.ok(configs);
+    public ResponseEntity<List<Map<String, String>>> getAllConfigurations() throws IOException {
+        return ResponseEntity.ok(configService.getAllConfigFiles());
     }
 
-    @GetMapping("/all/json")
+    @GetMapping("/configFile")
     public ResponseEntity<String> getConfiguration() throws IOException {
         return ResponseEntity.ok(configService.getConfigAsJson());
     }
@@ -57,30 +36,41 @@ public class ConfigurationController {
         return ResponseEntity.ok(configService.getConfigAsJson(fileName));
     }
 
-    @PostMapping
-    public ResponseEntity<String> addConfiguration(@RequestBody Map<String, Object> config) {
-        return ResponseEntity.ok("Configuration added successfully.");
+    @PostMapping("/add")
+    public ResponseEntity<String> addConfiguration(@RequestParam String fileName, @RequestBody Map<String, Object> config) {
+        try {
+            configService.createConfigFile(fileName, config);
+            return ResponseEntity.ok("Config file created successfully: " + fileName + ".yaml");
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("An error occurred while creating the configuration file " + e.getMessage());
+        }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateConfiguration(@PathVariable String id, @RequestBody Map<String, Object> config) {
-        return ResponseEntity.ok("Configuration updated successfully.");
+    @PutMapping("/update")
+    public ResponseEntity<String> updateConfiguration(@RequestParam String fileName, @RequestBody Map<String, Object> config) {
+        return configService.updateConfigFile(fileName, config);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteConfiguration(@PathVariable String id) {
-        return ResponseEntity.ok("Configuration deleted successfully.");
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteConfigFile(@RequestParam String fileName) {
+        boolean isDeleted = configService.deleteConfigFile(fileName);
+
+        if (isDeleted) {
+            return ResponseEntity.ok(fileName + ".yaml deleted successfully.");
+        } else {
+            return ResponseEntity.status(404).body(fileName + ".yaml cannot found.");
+        }
     }
 
-    @GetMapping("/specific/json/all")
+    @GetMapping("/specificConfigFile")
     public ResponseEntity<String> getSpecificConfiguration() throws IOException {
-        String spesificConfigfile = configService.getSpesificConfigAsJson();
+        String spesificConfigFile = configService.getSpesificConfigAsJson();
 
-        if (spesificConfigfile == null) {
+        if (spesificConfigFile == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Configuration not found");
         }
 
-        return ResponseEntity.ok(spesificConfigfile);
+        return ResponseEntity.ok(spesificConfigFile);
     }
 
     @GetMapping("/specific")
