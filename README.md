@@ -15,9 +15,6 @@ This project is a **Configuration Management System** that allows users to manag
   - [GET /api/configuration/byFileName/{fileName}](#get-apiconfigurationbyfilename)
   - [GET /api/configuration/specificConfigFile](#get-apiconfigurationspecificconfigfile)
   - [GET /api/configuration/specific](#get-apiconfigurationspecific)
-- [How to Run the Project](#how-to-run-the-project)
-  - [Running Backend](#running-backend)
-  - [Running Frontend](#running-frontend)
 - [Contributing](#contributing)
 - [License and Author](#license-and-author)
 
@@ -220,5 +217,4 @@ We welcome contributions! Feel free to fork this repository, create issues, and 
 
 ## License and Author
 
-berk alparslan
-```
+Ali Berk Alparslan
